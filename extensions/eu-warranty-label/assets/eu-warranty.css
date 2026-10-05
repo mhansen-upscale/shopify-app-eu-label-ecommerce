@@ -1,0 +1,101 @@
+.euw{--euw-blue:#003399;--euw-yellow:#FFED00;--euw-black:#000;--euw-white:#FFF;max-width:var(--euw-max,560px);min-width:0;margin:1.25rem 0;display:grid;gap:1rem;container-type:inline-size}
+.euw--center{margin-inline:auto;justify-items:center;text-align:center}
+.euw--center .euw-zoom__hint{justify-content:center}
+.euw-used{margin:0;padding:.75rem 1rem;border-left:4px solid var(--euw-blue);background:#f2f5fb;color:#111;font-size:.9rem;line-height:1.45;text-align:left}
+
+/* App-Embed: Seitenende oder fixiertes Band. Liegt ein Block der App auf der Seite, hat er Vorrang. */
+body:has(.euw--block) .euw--embed{display:none}
+.euw--embed{margin:2rem auto;padding:0 1rem;box-sizing:border-box;width:100%}
+.euw--sticky{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:none;margin:0;display:flex;justify-content:center;padding:0 max(1rem,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(1rem,env(safe-area-inset-left));background:#fff;color:#111;border-top:1px solid #e1e3e5;box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+.euw-notice--hidden{display:none}
+
+/* Warenkorb: GARAN-Label je Artikel mit Produktname */
+.euw-cart-item{display:grid;gap:.375rem}
+.euw-cart-item__title{margin:0;font-size:.875rem;font-weight:600}
+
+/* Mitteilung (Anhang I). Amtliche Grafiken immer auf Weiß, auch in dunklen Themes. */
+.euw-notice{min-width:0;width:100%}
+.euw-notice__figure{margin:0}
+.euw-notice img{display:block;width:100%;height:auto;background:#fff}
+
+/* Eingeklappt: Satz zu den Gewährleistungsrechten, die Mitteilung erscheint beim ersten Klick (Praxisleitlinien 2.3):
+   "collapsed" (<details>) klappt ab 500 px Platz inline auf, sonst große Ansicht; "auto" zeigt ab 500 px vollständig.
+   "auto": vollständig erst ab 500 px verfügbarer Breite. Der Fließtext der amtlichen Grafik ist ~2,6 % ihrer Breite
+   (BG ~2,4 %, gemessen in den PDFs der Kommission) -> darunter unter 12 px, bei Standardgröße nicht mehr lesbar (Leitlinien 2.3). */
+.euw-notice__toggle{all:unset;box-sizing:border-box;display:inline-block;min-height:44px;padding:.6rem 0;line-height:1.4;font-weight:600;text-decoration:underline;text-underline-offset:.2em;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.euw-notice__toggle svg{display:inline-block;width:1.1em;height:1.1em;margin-left:.15em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.euw-notice__toggle:focus-visible{outline:3px solid var(--euw-blue);outline-offset:2px}
+.euw-notice__toggle::-webkit-details-marker{display:none}
+.euw-notice__toggle::marker{content:''}
+.euw-notice--collapsed .euw-notice__toggle svg{transition:transform .15s ease}
+.euw-notice--collapsed[open] .euw-notice__toggle svg{transform:rotate(90deg)}
+.euw-notice--collapsed[open] .euw-notice__body{margin-top:.25rem}
+@container (max-width:499.98px){.euw-notice--auto .euw-notice__body{display:none}}
+@container (min-width:500px){.euw-notice--auto .euw-notice__toggle{display:none}}
+@supports not (container-type:inline-size){
+  @media (max-width:749px){.euw-notice--auto .euw-notice__body{display:none}}
+  @media (min-width:750px){.euw-notice--auto .euw-notice__toggle{display:none}}
+}
+
+/* Link zum Ziel des QR-Codes, immer bei der Grafik (Praxisleitlinien 2.3 und 3.3.2) */
+.euw-link{margin:.5rem 0 0;font-size:.8125rem;line-height:1.4;overflow-wrap:anywhere}
+.euw-link a{color:inherit;text-decoration:underline;text-underline-offset:.15em}
+
+/* Nur für Screenreader: amtlicher Wortlaut der Mitteilung */
+.euw-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* Vergrößern: die Grafik selbst ist die Schaltfläche. Theme-Button-Stile neutralisieren; der Hinweis steht unter, nie auf der amtlichen Grafik. */
+.euw-zoom{all:unset;box-sizing:border-box;display:block;width:100%;cursor:zoom-in;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.euw-zoom:focus-visible{outline:3px solid var(--euw-blue);outline-offset:3px}
+.euw-zoom__hint{display:flex;align-items:center;gap:.375rem;min-height:1.75rem;margin-top:.375rem;font-size:.8125rem;line-height:1.3;opacity:.75}
+.euw-zoom__hint svg{flex:none;width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.euw-zoom:hover .euw-zoom__hint{opacity:1;text-decoration:underline}
+
+/* GARAN (Anhang II): Textfelder in Inter, Farbe wie in der offiziellen Vorlage */
+.euw-garan{width:min(100%,360px);text-align:left}
+.euw-garan__tab svg,.euw-garan [data-euw-zoom-media],.euw-modal__media svg{display:block;width:100%;height:auto;background:#fff;font-family:'EUInter',system-ui,sans-serif}
+.euw-garan svg text,.euw-modal__media svg text{fill:#231f20}
+.euw-garan__label{display:block}
+.euw-garan__label:focus{outline:none}
+.euw-garan__label.euw-zoom:focus-visible{outline:3px solid var(--euw-blue);outline-offset:3px}
+
+/* Geschachteltes Format (<details>/<summary>): der erste Klick/Tipp/Enter öffnet das vollständige Label im Modal
+   (Leitlinien 3.3 "after mouseover or click"); ohne Skript klappt es nativ auf. 290 px Breite = 44 px Tipphöhe. */
+.euw-garan__tab{all:unset;box-sizing:border-box;display:block;width:min(100%,290px);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.euw-garan__tab::-webkit-details-marker{display:none}
+.euw-garan__tab::marker{content:''}
+.euw-garan__tab:focus-visible{outline:3px solid var(--euw-blue);outline-offset:2px}
+.euw-garan--nested[open] .euw-garan__full{margin-top:.5rem}
+
+/* Modal: mobil Vollbild, ab Tablet zentriertes Fenster. Grafik zuerst ganz sichtbar, per Tipp/Lupe in Originalgröße (verschiebbar). */
+html.euw-modal-open{overflow:hidden}
+.euw-modal{box-sizing:border-box;width:100%;max-width:none;height:100%;max-height:none;margin:0;padding:0;border:0;background:#fff;color:#111;overflow:hidden;text-align:left}
+@supports (height:100dvh){.euw-modal{height:100dvh}}
+.euw-modal[open]{display:flex;flex-direction:column}
+.euw-modal::backdrop{background:rgba(0,0,0,.75)}
+.euw-modal__bar{flex:none;display:flex;justify-content:flex-end;gap:.25rem;padding:.25rem;padding-top:max(.25rem,env(safe-area-inset-top));padding-right:max(.25rem,env(safe-area-inset-right));border-bottom:1px solid #e1e3e5}
+.euw-modal__btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;color:#111;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.euw-modal__btn[hidden]{display:none}
+.euw-modal__btn:hover{background:#f1f2f4}
+.euw-modal__btn:focus-visible{outline:3px solid var(--euw-blue,#003399);outline-offset:-3px}
+.euw-modal__btn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.euw-modal__icon-out,.euw-modal.is-zoomed .euw-modal__icon-in{display:none}
+.euw-modal.is-zoomed .euw-modal__icon-out{display:block}
+.euw-modal__body{flex:1;min-height:0;display:flex;overflow:auto;overscroll-behavior:contain;padding:.5rem max(.5rem,env(safe-area-inset-right)) .5rem max(.5rem,env(safe-area-inset-left))}
+.euw-modal__body:focus-visible{outline:3px solid #003399;outline-offset:-3px}
+.euw-modal__media{flex:none;margin:auto}
+.euw-modal__media img,.euw-modal__media svg{display:block;width:100%;height:auto}
+.euw-modal.is-zoomable .euw-modal__media{cursor:zoom-in}
+.euw-modal.is-zoomed .euw-modal__media{cursor:zoom-out}
+.euw-modal__foot{flex:none;padding:.25rem max(.75rem,env(safe-area-inset-right)) max(.5rem,env(safe-area-inset-bottom)) max(.75rem,env(safe-area-inset-left));border-top:1px solid #e1e3e5}
+.euw-modal__foot:empty{display:none}
+.euw-modal__foot .euw-link{margin:.25rem 0;color:#111}
+@media (min-width:750px){
+  .euw-modal{width:min(calc(100vw - 4rem),1100px);height:calc(100vh - 4rem);margin:auto;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  @supports (height:100dvh){.euw-modal{height:calc(100dvh - 4rem)}}
+  .euw-modal__body{padding:1rem 1.5rem}
+  .euw-modal__foot{padding:.5rem 1.5rem .75rem}
+}
+
+/* Druck: alles vollständig, keine Bedienelemente */
+@media print{.euw-notice__body{display:block!important}.euw-notice--collapsed::details-content{content-visibility:visible;display:block}.euw-garan--nested::details-content{content-visibility:visible;display:block}.euw-notice__toggle,.euw-garan__tab,.euw-zoom__hint,.euw-modal{display:none!important}}

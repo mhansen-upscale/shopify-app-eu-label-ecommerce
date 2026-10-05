@@ -1,0 +1,83 @@
+{%- comment -%}
+  Harmonisierte Mitteilung (Anhang I) als Einheit für das Modal (data-euw-unit) samt Link zum Ziel des QR-Codes.
+  Parameter: texts (Werte aus snippets/euw-lang.liquid), display ('collapsed' | 'auto' | 'full' | 'hidden'),
+  address ('neutral' | 'formal' | 'informal'), uid, zoom.
+  'hidden': nur Quelle für das Modal (z. B. fixiertes Band des App-Embeds), im Shop nicht sichtbar.
+{%- endcomment -%}
+{%- liquid
+  assign lang = texts[17]
+  assign wh = texts[0] | split: 'x'
+  assign notice_w = wh[0]
+  assign notice_h = wh[1]
+  assign notice_url = texts[1]
+  assign notice_url_label = texts[2]
+  assign notice_title = texts[5]
+  assign notice_text = texts[6]
+  case address
+    when 'formal'
+      assign sentence = texts[8]
+    when 'informal'
+      assign sentence = texts[9]
+    else
+      assign sentence = texts[7]
+  endcase
+  assign t_enlarge = texts[12]
+-%}
+{%- capture notice_body -%}
+  <div class="euw-notice__body">
+    {%- capture notice_img -%}
+      <img
+        src="{{ 'eu-notice-' | append: lang | append: '.png' | asset_url }}"
+        alt="{{ notice_title | escape }}"
+        aria-describedby="{{ uid }}-notice-text"
+        width="{{ notice_w }}" height="{{ notice_h }}"
+        loading="lazy" decoding="async"
+        data-euw-zoom-media>
+    {%- endcapture -%}
+    <figure class="euw-notice__figure">
+      {%- if zoom -%}
+        <button type="button" class="euw-zoom" aria-haspopup="dialog" data-euw-zoom>
+          {{- notice_img -}}
+          {%- render 'euw-zoom-hint', label: t_enlarge -%}
+        </button>
+      {%- else -%}
+        {{- notice_img -}}
+      {%- endif -%}
+    </figure>
+    <p class="euw-link" data-euw-link>
+      {{- sentence | escape }}: <a href="{{ notice_url }}" target="_blank" rel="noopener">{{ notice_url_label }}</a>
+    </p>
+    {%- comment -%} Amtlicher Wortlaut der Mitteilung für Screenreader (aus dem PDF der Kommission) {%- endcomment -%}
+    <div class="euw-sr" id="{{ uid }}-notice-text">{{ notice_text | escape }}</div>
+  </div>
+{%- endcapture -%}
+{%- capture chevron -%}<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"/></svg>{%- endcapture -%}
+
+{%- case display -%}
+  {%- when 'collapsed' -%}
+    {%- comment -%}
+      Aufklappen per Klick (<details>): ab 500 px Platz klappt die Mitteilung unter dem Satz auf; schmaler wäre sie
+      inline nicht lesbar, dann öffnet derselbe Klick die große Ansicht (Skript, data-euw-open-narrow).
+    {%- endcomment -%}
+    <details class="euw-notice euw-notice--collapsed" data-euw-unit id="{{ uid }}-notice"
+      data-euw-zoom-w="{{ notice_w }}" data-euw-zoom-h="{{ notice_h }}">
+      <summary class="euw-notice__toggle"{% if zoom %} data-euw-open-narrow="{{ uid }}-notice"{% endif %}>
+        {{- sentence | escape -}}{{- chevron -}}
+      </summary>
+      {{- notice_body -}}
+    </details>
+  {%- when 'full', 'hidden' -%}
+    <div class="euw-notice euw-notice--{{ display }}" data-euw-unit id="{{ uid }}-notice"
+      data-euw-zoom-w="{{ notice_w }}" data-euw-zoom-h="{{ notice_h }}">
+      {{- notice_body -}}
+    </div>
+  {%- else -%}
+    {%- comment -%} Automatisch: vollständig ab 500 px Platz, sonst Satz, der die große Ansicht öffnet (CSS-Container-Abfrage) {%- endcomment -%}
+    <div class="euw-notice euw-notice--auto" data-euw-unit id="{{ uid }}-notice"
+      data-euw-zoom-w="{{ notice_w }}" data-euw-zoom-h="{{ notice_h }}">
+      <button type="button" class="euw-notice__toggle" aria-haspopup="dialog" data-euw-open="{{ uid }}-notice">
+        {{- sentence | escape -}}{{- chevron -}}
+      </button>
+      {{- notice_body -}}
+    </div>
+{%- endcase -%}

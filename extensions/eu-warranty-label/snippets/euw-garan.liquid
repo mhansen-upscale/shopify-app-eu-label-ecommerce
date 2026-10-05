@@ -1,0 +1,38 @@
+{%- comment -%}
+  GARAN-Label eines Produkts mit Varianten: Varianten erben die Angaben des Produkts, solange sie keine eigenen haben
+  (garan_confirmed an der Variante gesetzt = eigene Angaben; false = für diese Variante kein Label).
+  Ausgegeben werden nur das Label des Produkts und die abweichender Varianten (data-euw-variant); sichtbar ist das zur
+  gewählten Variante passende, beim Variantenwechsel schaltet eu-warranty.js um.
+  Parameter: p (Produkt), v (gewählte Variante), fixed (nur Label für v, z. B. Warenkorb), nested, zoom, texts, uid
+{%- endcomment -%}
+{%- liquid
+  assign pm = p.metafields['$app:eu_warranty']
+  assign current = v | default: p.selected_or_first_available_variant
+  assign own = current.metafields['$app:eu_warranty']
+-%}
+{%- if fixed -%}
+  {%- if own.garan_confirmed != blank -%}
+    {%- render 'garan-label', m: own, nested: nested, zoom: zoom, texts: texts, uid: uid -%}
+  {%- else -%}
+    {%- render 'garan-label', m: pm, nested: nested, zoom: zoom, texts: texts, uid: uid -%}
+  {%- endif -%}
+{%- else -%}
+  {%- capture labels -%}
+    <div data-euw-variant="default"{% if own.garan_confirmed != blank %} hidden{% endif %}>
+      {%- render 'garan-label', m: pm, nested: nested, zoom: zoom, texts: texts, uid: uid -%}
+    </div>
+    {%- for variant in p.variants -%}
+      {%- assign vm = variant.metafields['$app:eu_warranty'] -%}
+      {%- if vm.garan_confirmed != blank -%}
+        {%- assign vuid = uid | append: '-' | append: variant.id -%}
+        <div data-euw-variant="{{ variant.id }}"{% if variant.id != current.id %} hidden{% endif %}>
+          {%- render 'garan-label', m: vm, nested: nested, zoom: zoom, texts: texts, uid: vuid -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- comment -%} Nur ausgeben, wenn mindestens ein Label entstanden ist {%- endcomment -%}
+  {%- if labels contains 'data-euw-unit' -%}
+    <div class="euw-garan-set" data-euw-garan-set>{{ labels }}</div>
+  {%- endif -%}
+{%- endif -%}

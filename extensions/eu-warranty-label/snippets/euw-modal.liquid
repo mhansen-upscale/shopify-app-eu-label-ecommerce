@@ -1,0 +1,24 @@
+{%- comment -%} Große Ansicht (Modal) für Mitteilung und GARAN-Label. Parameter: texts (Werte aus snippets/euw-lang.liquid) {%- endcomment -%}
+{%- liquid
+  assign t_dialog = texts[13]
+  assign t_zoom_in = texts[14]
+  assign t_zoom_out = texts[15]
+  assign t_close = texts[16]
+-%}
+<dialog class="euw-modal" aria-label="{{ t_dialog | escape }}" data-euw-modal>
+  <div class="euw-modal__bar">
+    <button type="button" class="euw-modal__btn" aria-pressed="false" hidden
+      aria-label="{{ t_zoom_in | escape }}"
+      data-euw-zoom-toggle data-label-in="{{ t_zoom_in | escape }}" data-label-out="{{ t_zoom_out | escape }}">
+      <svg class="euw-modal__icon-in" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg>
+      <svg class="euw-modal__icon-out" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M7.5 10.5h6"/></svg>
+    </button>
+    <button type="button" class="euw-modal__btn" aria-label="{{ t_close | escape }}" autofocus data-euw-close>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="euw-modal__body" tabindex="0" data-euw-modal-body>
+    <div class="euw-modal__media" data-euw-modal-media></div>
+  </div>
+  <div class="euw-modal__foot" data-euw-modal-foot></div>
+</dialog>

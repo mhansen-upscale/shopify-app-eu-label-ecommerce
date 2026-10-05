@@ -1,0 +1,58 @@
+# Mitteilung (Anhang I) und GARAN-Label je Artikel auf Danke-Seite, Bestellstatusseite und – nur Shopify Plus – in den
+# Checkout-Schritten. Zeigt nur, was die App veröffentlicht (app/lib/publish.server.ts): Shop-Metafield "notice" mit Bild
+# und Texten je Sprache, garan_image an Produkt/Variante. Fehlt "notice" (nicht eingerichtet oder nur B2B), bleibt der
+# Block leer. uid ergänzt Shopify CLI beim ersten "shopify app dev"/"deploy".
+api_version = "2026-07"
+
+[[extensions]]
+name = "EU-Gewährleistung"
+handle = "eu-warranty-checkout"
+type = "ui_extension"
+
+  [[extensions.metafields]]
+  namespace = "$app:eu_warranty"
+  key = "notice"
+
+  [[extensions.metafields]]
+  namespace = "$app:eu_warranty"
+  key = "garan_image"
+
+  [[extensions.targeting]]
+  module = "./src/Block.tsx"
+  target = "purchase.thank-you.block.render"
+
+  [[extensions.targeting]]
+  module = "./src/Block.tsx"
+  target = "customer-account.order-status.block.render"
+
+  [[extensions.targeting]]
+  module = "./src/Block.tsx"
+  target = "purchase.checkout.block.render"
+
+  [extensions.settings]
+
+    [[extensions.settings.fields]]
+    key = "display"
+    type = "single_line_text_field"
+    name = "Mitteilung"
+    description = "collapsed = Satz, Mitteilung klappt per Klick auf (Standard); full = immer vollständig"
+
+      [[extensions.settings.fields.validations]]
+      name = "choices"
+      value = "[\"collapsed\", \"full\"]"
+
+    [[extensions.settings.fields]]
+    key = "address"
+    type = "single_line_text_field"
+    name = "Anrede im Satz"
+    description = "neutral = ohne Anrede (Standard), formal = Sie, informal = Du"
+
+      [[extensions.settings.fields.validations]]
+      name = "choices"
+      value = "[\"neutral\", \"formal\", \"informal\"]"
+
+    [[extensions.settings.fields]]
+    key = "hide_garan"
+    type = "boolean"
+    name = "GARAN-Labels der Artikel ausblenden"
+    description = "Nur wenn du sie an anderer Stelle zeigst. Die Pflicht zur Angabe bleibt."

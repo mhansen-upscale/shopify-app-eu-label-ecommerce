@@ -1,0 +1,52 @@
+# Konfiguration der PRODUKTIONS-App (eigene App im Partner Dashboard, getrennt von der Dev-App).
+# Anlegen mit: shopify app config link  -> Name "production" -> dann Inhalte hier abgleichen.
+client_id = "<CLIENT_ID_DER_PRODUKTIONS_APP>"
+name = "EU-Gewährleistungslabel"
+handle = "eu-gewaehrleistungslabel"
+application_url = "https://eu-gewaehrleistungslabel.fly.dev"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = false
+include_config_on_deploy = true
+
+[access_scopes]
+# read_inventory: Versandpflicht (inventoryItem.requiresShipping) für den CSV-Nachweis
+# write_files: Bilder von Mitteilung und GARAN-Label in Shopify Files für Checkout und Bestellbestätigung
+scopes = "write_products,read_inventory,write_files"
+
+[auth]
+redirect_urls = [
+  "https://eu-gewaehrleistungslabel.fly.dev/auth/callback",
+  "https://eu-gewaehrleistungslabel.fly.dev/auth/shopify/callback",
+  "https://eu-gewaehrleistungslabel.fly.dev/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2026-10"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+  # Tarifwechsel (Managed Pricing) im Nachweis-Protokoll festhalten
+  [[webhooks.subscriptions]]
+  topics = [ "app_subscriptions/update" ]
+  uri = "/webhooks/app/subscriptions_update"
+
+  # Gelöschte Produkte aus der GARAN-Zählung (Tariflimit) nehmen
+  [[webhooks.subscriptions]]
+  topics = [ "products/delete" ]
+  uri = "/webhooks/products/delete"
+
+  # DSGVO-Pflicht-Webhooks für den App Store
+  [[webhooks.subscriptions]]
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+  uri = "/webhooks/compliance"
+
+[pos]
+embedded = false

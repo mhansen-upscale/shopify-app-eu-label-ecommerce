@@ -1,0 +1,44 @@
+{
+  "block": {
+    "name": "EU warranty label"
+  },
+  "settings": {
+    "show_notice": "Show legal guarantee notice (mandatory)",
+    "notice_display": "Notice display",
+    "notice_display_info": "“Expand on click” shows a sentence about the legal guarantee rights; the first click expands the notice below it (pattern from the European Commission practical guidelines). Below about 500 px width (e.g. phones) it would not be legible inline, so it opens enlarged.",
+    "notice_auto": "Automatic: full from 500 px width, otherwise sentence",
+    "notice_full": "Always full",
+    "notice_collapsed": "Expand on click (sentence, notice expands below)",
+    "address": "Form of address in the guarantee sentence",
+    "address_neutral": "Neutral",
+    "address_formal": "Formal (e.g. German “Sie”)",
+    "address_informal": "Informal (e.g. German “du”)",
+    "show_garan": "Show GARAN label when a confirmed producer guarantee is set",
+    "garan_display": "GARAN display",
+    "garan_nested": "Nested (full label opens on first click/tap)",
+    "garan_full": "Full",
+    "enable_zoom": "Enlarge graphics on click/tap (modal)",
+    "alignment": "Alignment",
+    "align_left": "Left",
+    "align_center": "Center",
+    "max_width": "Maximum width",
+    "max_width_info": "Below 500 px the text of the full notice would be smaller than 12 px and hard to read. For a compact look use “Always collapsed”."
+  },
+  "cart": {
+    "name": "EU legal guarantee (cart)",
+    "show_garan": "Show GARAN label per item (confirmed producer guarantee)"
+  },
+  "embed": {
+    "name": "EU legal guarantee notice",
+    "pages": "Pages",
+    "on_cart": "On the cart page",
+    "on_product": "On product pages",
+    "on_product_info": "Not needed if the “EU warranty label” block is on the product page – it takes precedence and also shows the GARAN label.",
+    "on_collection": "On collection pages",
+    "on_home": "On the home page",
+    "on_all": "On every page",
+    "position": "Position",
+    "position_footer": "At the end of the page",
+    "position_sticky": "Fixed at the bottom (bar with sentence, opens the notice)"
+  }
+}

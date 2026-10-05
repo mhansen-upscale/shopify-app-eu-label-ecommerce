@@ -1,0 +1,88 @@
+{%- comment -%}
+  EU-Gewährleistungslabel auf der Produktseite (VO (EU) 2025/1960, Praxisleitlinien der Kommission April 2026)
+  - Anhang I: harmonisierte Mitteilung (Pflicht, amtliche Grafik unverändert), snippets/euw-notice.liquid
+  - Anhang II: GARAN-Label (nur bestätigte Herstellergarantie > 2 Jahre, je Variante), snippets/euw-garan.liquid
+  Regeln: snippets/euw-rules.liquid; Texte, Maße und Links je Sprachfassung: snippets/euw-lang.liquid (generiert)
+  Daten: app-eigener Namespace $app:eu_warranty (Shop-Einstellungen, Produkt- und Variantenangaben)
+{%- endcomment -%}
+
+{%- assign s = shop.metafields['$app:eu_warranty'].settings.value -%}
+{%- capture rules -%}{% render 'euw-rules', p: product, s: s %}{%- endcapture -%}
+
+{%- if rules contains 'show' -%}
+  {%- capture lang_data -%}{% render 'euw-lang' %}{%- endcapture -%}
+  {%- liquid
+    assign texts = lang_data | split: '§'
+    # Ältere Block-Instanzen ohne gespeicherten Wert: Vergrößern an, Aufklappen per Klick
+    assign zoom = true
+    if block.settings.enable_zoom == false
+      assign zoom = false
+    endif
+    assign display = block.settings.notice_display | default: 'collapsed'
+    assign uid = block.id | prepend: 'euw-'
+  -%}
+  <div class="euw euw--block euw--{{ block.settings.alignment | default: 'left' }}" style="--euw-max: {{ block.settings.max_width }}px;" lang="{{ texts[17] }}" {{ block.shopify_attributes }}>
+    {%- if block.settings.show_notice -%}
+      {%- render 'euw-notice', texts: texts, display: display, address: block.settings.address, uid: uid, zoom: zoom -%}
+    {%- endif -%}
+
+    {%- if rules contains 'used' and s.usedHint != blank -%}
+      <p class="euw-used">{{ s.usedHint | escape }}</p>
+    {%- endif -%}
+
+    {%- if block.settings.show_garan -%}
+      {%- render 'euw-garan', p: product, v: product.selected_or_first_available_variant, nested: block.settings.garan_display,
+        zoom: zoom, texts: texts, uid: uid -%}
+    {%- endif -%}
+
+    {%- if zoom or display != 'full' -%}
+      {%- render 'euw-modal', texts: texts -%}
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:block.name",
+  "target": "section",
+  "enabled_on": { "templates": ["product"] },
+  "stylesheet": "eu-warranty.css",
+  "javascript": "eu-warranty.js",
+  "settings": [
+    { "type": "checkbox", "id": "show_notice", "label": "t:settings.show_notice", "default": true },
+    {
+      "type": "select", "id": "notice_display", "label": "t:settings.notice_display", "info": "t:settings.notice_display_info", "default": "collapsed",
+      "options": [
+        { "value": "collapsed", "label": "t:settings.notice_collapsed" },
+        { "value": "auto", "label": "t:settings.notice_auto" },
+        { "value": "full", "label": "t:settings.notice_full" }
+      ]
+    },
+    {
+      "type": "select", "id": "address", "label": "t:settings.address", "default": "neutral",
+      "options": [
+        { "value": "neutral", "label": "t:settings.address_neutral" },
+        { "value": "formal", "label": "t:settings.address_formal" },
+        { "value": "informal", "label": "t:settings.address_informal" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_garan", "label": "t:settings.show_garan", "default": true },
+    {
+      "type": "select", "id": "garan_display", "label": "t:settings.garan_display", "default": "nested",
+      "options": [
+        { "value": "nested", "label": "t:settings.garan_nested" },
+        { "value": "full", "label": "t:settings.garan_full" }
+      ]
+    },
+    { "type": "checkbox", "id": "enable_zoom", "label": "t:settings.enable_zoom", "default": true },
+    {
+      "type": "select", "id": "alignment", "label": "t:settings.alignment", "default": "left",
+      "options": [
+        { "value": "left", "label": "t:settings.align_left" },
+        { "value": "center", "label": "t:settings.align_center" }
+      ]
+    },
+    { "type": "range", "id": "max_width", "label": "t:settings.max_width", "info": "t:settings.max_width_info", "min": 500, "max": 900, "step": 20, "unit": "px", "default": 560 }
+  ]
+}
+{% endschema %}

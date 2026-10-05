@@ -1,0 +1,44 @@
+{
+  "block": {
+    "name": "EU-Gewährleistungslabel"
+  },
+  "settings": {
+    "show_notice": "Gewährleistungs-Mitteilung anzeigen (Pflicht)",
+    "notice_display": "Darstellung der Mitteilung",
+    "notice_display_info": "„Aufklappen per Klick“ zeigt einen Satz zu den Gewährleistungsrechten; beim ersten Klick klappt die Mitteilung darunter auf (Muster aus den Praxisleitlinien der EU-Kommission). Unter ca. 500 px Platz (z. B. Handy) wäre sie inline nicht lesbar, dann öffnet sie groß.",
+    "notice_auto": "Automatisch: vollständig ab 500 px Platz, sonst Satz",
+    "notice_full": "Immer vollständig",
+    "notice_collapsed": "Aufklappen per Klick (Satz, Mitteilung klappt darunter auf)",
+    "address": "Anrede im Satz zu den Gewährleistungsrechten",
+    "address_neutral": "Ohne Anrede",
+    "address_formal": "Sie (Ihre Rechte …)",
+    "address_informal": "Du (Deine Rechte …)",
+    "show_garan": "GARAN-Label anzeigen, wenn eine bestätigte Herstellergarantie hinterlegt ist",
+    "garan_display": "GARAN-Darstellung",
+    "garan_nested": "Geschachtelt (vollständiges Label öffnet beim ersten Klick/Tipp)",
+    "garan_full": "Vollständig",
+    "enable_zoom": "Grafiken per Klick/Tipp vergrößern (Modal)",
+    "alignment": "Ausrichtung",
+    "align_left": "Links",
+    "align_center": "Mittig",
+    "max_width": "Maximale Breite",
+    "max_width_info": "Unter 500 px wäre der Text der vollständigen Mitteilung kleiner als 12 px und nicht mehr gut lesbar. Kompakter: Darstellung „Immer eingeklappt“."
+  },
+  "cart": {
+    "name": "EU-Gewährleistung (Warenkorb)",
+    "show_garan": "GARAN-Label je Artikel anzeigen (bestätigte Herstellergarantie)"
+  },
+  "embed": {
+    "name": "EU-Gewährleistungsmitteilung",
+    "pages": "Seiten",
+    "on_cart": "Auf der Warenkorbseite",
+    "on_product": "Auf Produktseiten",
+    "on_product_info": "Nicht nötig, wenn der Block „EU-Gewährleistungslabel“ auf der Produktseite liegt – er hat Vorrang und zeigt zusätzlich das GARAN-Label.",
+    "on_collection": "Auf Kategorieseiten",
+    "on_home": "Auf der Startseite",
+    "on_all": "Auf jeder Seite",
+    "position": "Position",
+    "position_footer": "Am Seitenende",
+    "position_sticky": "Fest am unteren Rand (Band mit Satz, öffnet die Mitteilung)"
+  }
+}

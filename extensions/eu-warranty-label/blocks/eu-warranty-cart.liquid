@@ -1,0 +1,99 @@
+{%- comment -%}
+  EU-Gewährleistungslabel im Warenkorb: Mitteilung (Anhang I) und GARAN-Label je Position, damit es direkt vor der
+  Bestellung beim jeweiligen Artikel steht (Praxisleitlinien 3.3.2). Regeln wie auf der Produktseite (snippets/euw-rules).
+{%- endcomment -%}
+
+{%- liquid
+  assign s = shop.metafields['$app:eu_warranty'].settings.value
+  assign show = true
+  if s == blank or s.b2bOnly or cart.item_count == 0
+    assign show = false
+  endif
+-%}
+
+{%- if show -%}
+  {%- capture lang_data -%}{% render 'euw-lang' %}{%- endcapture -%}
+  {%- liquid
+    assign texts = lang_data | split: '§'
+    assign zoom = true
+    if block.settings.enable_zoom == false
+      assign zoom = false
+    endif
+    assign display = block.settings.notice_display | default: 'collapsed'
+    assign uid = block.id | prepend: 'euw-'
+  -%}
+  <div class="euw euw--block euw--cart euw--{{ block.settings.alignment | default: 'left' }}" style="--euw-max: {{ block.settings.max_width }}px;" lang="{{ texts[17] }}" {{ block.shopify_attributes }}>
+    {%- render 'euw-notice', texts: texts, display: display, address: block.settings.address, uid: uid, zoom: zoom -%}
+
+    {%- if block.settings.show_garan -%}
+      {%- for item in cart.items -%}
+        {%- capture rules -%}{% render 'euw-rules', p: item.product, v: item.variant, s: s %}{%- endcapture -%}
+        {%- if rules contains 'show' -%}
+          {%- assign iuid = uid | append: '-' | append: forloop.index -%}
+          {%- capture garan -%}
+            {%- render 'euw-garan', p: item.product, v: item.variant, fixed: true, nested: block.settings.garan_display,
+              zoom: zoom, texts: texts, uid: iuid -%}
+          {%- endcapture -%}
+          {%- if garan != blank -%}
+            <div class="euw-cart-item">
+              <p class="euw-cart-item__title">
+                {{- item.product.title | escape -}}
+                {%- unless item.product.has_only_default_variant %} – {{ item.variant.title | escape }}{% endunless -%}
+              </p>
+              {{- garan -}}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if zoom or display != 'full' -%}
+      {%- render 'euw-modal', texts: texts -%}
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:cart.name",
+  "target": "section",
+  "enabled_on": { "templates": ["cart"] },
+  "stylesheet": "eu-warranty.css",
+  "javascript": "eu-warranty.js",
+  "settings": [
+    {
+      "type": "select", "id": "notice_display", "label": "t:settings.notice_display", "info": "t:settings.notice_display_info", "default": "collapsed",
+      "options": [
+        { "value": "collapsed", "label": "t:settings.notice_collapsed" },
+        { "value": "auto", "label": "t:settings.notice_auto" },
+        { "value": "full", "label": "t:settings.notice_full" }
+      ]
+    },
+    {
+      "type": "select", "id": "address", "label": "t:settings.address", "default": "neutral",
+      "options": [
+        { "value": "neutral", "label": "t:settings.address_neutral" },
+        { "value": "formal", "label": "t:settings.address_formal" },
+        { "value": "informal", "label": "t:settings.address_informal" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_garan", "label": "t:cart.show_garan", "default": true },
+    {
+      "type": "select", "id": "garan_display", "label": "t:settings.garan_display", "default": "nested",
+      "options": [
+        { "value": "nested", "label": "t:settings.garan_nested" },
+        { "value": "full", "label": "t:settings.garan_full" }
+      ]
+    },
+    { "type": "checkbox", "id": "enable_zoom", "label": "t:settings.enable_zoom", "default": true },
+    {
+      "type": "select", "id": "alignment", "label": "t:settings.alignment", "default": "left",
+      "options": [
+        { "value": "left", "label": "t:settings.align_left" },
+        { "value": "center", "label": "t:settings.align_center" }
+      ]
+    },
+    { "type": "range", "id": "max_width", "label": "t:settings.max_width", "info": "t:settings.max_width_info", "min": 500, "max": 900, "step": 20, "unit": "px", "default": 560 }
+  ]
+}
+{% endschema %}

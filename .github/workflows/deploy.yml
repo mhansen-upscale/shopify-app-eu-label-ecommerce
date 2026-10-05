@@ -1,0 +1,21 @@
+# Bei Push auf main: prüfen, bauen, auf Fly deployen.
+# Secret im GitHub-Repo: FLY_API_TOKEN  (fly tokens create deploy)
+name: Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency: deploy-production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: node scripts/check-legal.mjs
+      - run: npx prisma generate && npm run build
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

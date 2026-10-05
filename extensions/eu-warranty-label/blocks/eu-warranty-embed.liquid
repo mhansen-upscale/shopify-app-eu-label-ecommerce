@@ -1,0 +1,106 @@
+{%- comment -%}
+  App-Embed: Mitteilung (Anhang I) shopweit ohne Theme-Bearbeitung – "als allgemeiner Hinweis auf der Website"
+  (Praxisleitlinien 2.3). Seiten wählbar; Position am Seitenende oder als fixiertes Band mit dem Satz zu den
+  Gewährleistungsrechten (öffnet die Mitteilung groß). Liegt ein Block der App auf der Seite, blendet sich der Embed aus
+  (CSS: .euw--block). GARAN gehört zum Produkt und steht nur im Produkt- bzw. Warenkorb-Block.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = shop.metafields['$app:eu_warranty'].settings.value
+  assign page_type = template.name
+  assign show = block.settings.on_all
+  if page_type == 'cart' and block.settings.on_cart
+    assign show = true
+  endif
+  if page_type == 'product' and block.settings.on_product
+    assign show = true
+  endif
+  if page_type == 'collection' and block.settings.on_collection
+    assign show = true
+  endif
+  if page_type == 'index' and block.settings.on_home
+    assign show = true
+  endif
+  if s == blank or s.b2bOnly
+    assign show = false
+  endif
+-%}
+
+{%- if show -%}
+  {%- capture lang_data -%}{% render 'euw-lang' %}{%- endcapture -%}
+  {%- liquid
+    assign texts = lang_data | split: '§'
+    assign uid = block.id | prepend: 'euw-'
+    case block.settings.address
+      when 'formal'
+        assign sentence = texts[8]
+      when 'informal'
+        assign sentence = texts[9]
+      else
+        assign sentence = texts[7]
+    endcase
+  -%}
+  {%- if block.settings.position == 'sticky' -%}
+    <div class="euw euw--embed euw--sticky" lang="{{ texts[17] }}" {{ block.shopify_attributes }}>
+      <button type="button" class="euw-notice__toggle euw-sticky__toggle" aria-haspopup="dialog" data-euw-open="{{ uid }}-notice">
+        {{- sentence | escape -}}
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 15l6-6 6 6"/></svg>
+      </button>
+      {%- render 'euw-notice', texts: texts, display: 'hidden', address: block.settings.address, uid: uid, zoom: true -%}
+      {%- render 'euw-modal', texts: texts -%}
+    </div>
+  {%- else -%}
+    <div class="euw euw--embed euw--{{ block.settings.alignment | default: 'center' }}" style="--euw-max: {{ block.settings.max_width }}px;" lang="{{ texts[17] }}" {{ block.shopify_attributes }}>
+      {%- render 'euw-notice', texts: texts, display: block.settings.notice_display, address: block.settings.address, uid: uid, zoom: true -%}
+      {%- render 'euw-modal', texts: texts -%}
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:embed.name",
+  "target": "body",
+  "stylesheet": "eu-warranty.css",
+  "javascript": "eu-warranty.js",
+  "settings": [
+    { "type": "header", "content": "t:embed.pages" },
+    { "type": "checkbox", "id": "on_cart", "label": "t:embed.on_cart", "default": true },
+    { "type": "checkbox", "id": "on_product", "label": "t:embed.on_product", "info": "t:embed.on_product_info", "default": false },
+    { "type": "checkbox", "id": "on_collection", "label": "t:embed.on_collection", "default": false },
+    { "type": "checkbox", "id": "on_home", "label": "t:embed.on_home", "default": false },
+    { "type": "checkbox", "id": "on_all", "label": "t:embed.on_all", "default": false },
+    {
+      "type": "select", "id": "position", "label": "t:embed.position", "default": "footer",
+      "options": [
+        { "value": "footer", "label": "t:embed.position_footer" },
+        { "value": "sticky", "label": "t:embed.position_sticky" }
+      ]
+    },
+    {
+      "type": "select", "id": "notice_display", "label": "t:settings.notice_display", "default": "collapsed",
+      "options": [
+        { "value": "collapsed", "label": "t:settings.notice_collapsed" },
+        { "value": "auto", "label": "t:settings.notice_auto" },
+        { "value": "full", "label": "t:settings.notice_full" }
+      ]
+    },
+    {
+      "type": "select", "id": "address", "label": "t:settings.address", "default": "neutral",
+      "options": [
+        { "value": "neutral", "label": "t:settings.address_neutral" },
+        { "value": "formal", "label": "t:settings.address_formal" },
+        { "value": "informal", "label": "t:settings.address_informal" }
+      ]
+    },
+    {
+      "type": "select", "id": "alignment", "label": "t:settings.alignment", "default": "center",
+      "options": [
+        { "value": "left", "label": "t:settings.align_left" },
+        { "value": "center", "label": "t:settings.align_center" }
+      ]
+    },
+    { "type": "range", "id": "max_width", "label": "t:settings.max_width", "info": "t:settings.max_width_info", "min": 500, "max": 900, "step": 20, "unit": "px", "default": 560 }
+  ]
+}
+{% endschema %}

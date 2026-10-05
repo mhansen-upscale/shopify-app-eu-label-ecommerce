@@ -1,0 +1,49 @@
+{%- comment -%}
+  Gilt die Mitteilung für dieses Produkt? Ausgabe als Stichwörter: "show" (anzeigen), "used" (Gebrauchtware).
+  Parameter: p (Produkt), v (Variante, optional), s (Shop-Einstellungen aus $app:eu_warranty.settings).
+  Gleiche Regeln wie der CSV-Nachweis (app/routes/app.export.tsx).
+{%- endcomment -%}
+{%- liquid
+  assign pm = p.metafields['$app:eu_warranty']
+  assign variant = v | default: p.selected_or_first_available_variant
+  assign show = true
+  if s == blank or p == blank or s.b2bOnly
+    assign show = false
+  endif
+  if pm.exclude.value == true
+    assign show = false
+  endif
+  if s.excludeGiftCards and p.gift_card?
+    assign show = false
+  endif
+  if s.excludeNoShipping and variant.requires_shipping == false
+    assign show = false
+  endif
+  for c in p.collections
+    assign cid = c.id | append: ''
+    if s.excludeCollectionIds contains cid
+      assign show = false
+    endif
+  endfor
+
+  assign used = false
+  if pm.used.value == true
+    assign used = true
+  endif
+  for tag in p.tags
+    assign t = tag | downcase | strip
+    if s.excludeTags contains t
+      assign show = false
+    endif
+    if s.usedTag != blank and t == s.usedTag
+      assign used = true
+    endif
+  endfor
+
+  if show
+    echo 'show '
+  endif
+  if used
+    echo 'used'
+  endif
+-%}

@@ -1,0 +1,10 @@
+node_modules
+build
+.env*
+.shopify
+extensions
+.git
+.github
+*.log
+prisma/dev.sqlite*
+legal-sources/

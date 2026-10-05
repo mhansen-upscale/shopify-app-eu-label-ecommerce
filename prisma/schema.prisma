@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+model ShopConfig {
+  shop               String    @id
+  definitionsVersion Int       @default(0)
+  // Händler hat den Baustein in die Bestellbestätigung eingefügt (Nachweis, Selbstauskunft)
+  emailSnippetAt     DateTime?
+  updatedAt          DateTime  @updatedAt
+}
+
+// In Shopify Files hochgeladene Bilder für Checkout und Bestellbestätigung (Mitteilung je Sprache, GARAN je Inhalt).
+// key = Hash aus Inhalt und Render-Version: gleiche Angaben -> dieselbe Datei. Dateien werden nie gelöscht, damit Bilder
+// in bereits versandten Bestellbestätigungen erhalten bleiben.
+model RenderedFile {
+  shop      String
+  key       String
+  fileId    String
+  url       String
+  createdAt DateTime @default(now())
+
+  @@id([shop, key])
+}
+
+// Produkte mit GARAN-Label je Shop: Grundlage für das Tariflimit (die Mitteilung selbst ist in jedem Tarif shopweit)
+model GaranProduct {
+  shop      String
+  productId String
+  createdAt DateTime @default(now())
+
+  @@id([shop, productId])
+}
+
+model ComplianceEvent {
+  id        Int      @id @default(autoincrement())
+  shop      String
+  type      String
+  subject   String?
+  payload   String
+  createdAt DateTime @default(now())
+
+  @@index([shop, createdAt])
+}

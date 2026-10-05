@@ -1,0 +1,123 @@
+{%- comment -%}
+  Harmonisierte Kennzeichnung (GARAN) nach Anhang II VO (EU) 2025/1960.
+  Grundlage sind die offiziellen SVG-Vorlagen der Kommission ("GARAN label for website", Praxisleitlinien April 2026),
+  gerastert ohne die drei editierbaren Textfelder (XX, Brand/Trademark, Model identifier). Diese setzt das Snippet an
+  den Originalkoordinaten wieder ein: Inter, Originalgröße, Farbe #231f20; die Dauer endet mit demselben Abstand zum
+  Kalendersymbol wie "XX" in der Vorlage.
+  Koordinaten im viewBox der Vorlagen, Quelle: app/lib/garan-geometry.json (check-legal.mjs gleicht ab).
+  Parameter: m (Metafields $app:eu_warranty von Produkt oder Variante), nested ('nested'|'full'), zoom, texts (Sprachwerte), uid
+  Rendert nur bei bestätigter Garantie über 2 Jahre mit Marke und Modell (sonst keine Ausgabe).
+{%- endcomment -%}
+
+{%- liquid
+  # Dauer in ganzen oder halben Jahren, Schreibweise mit Komma (Leitlinien 3.1 vi)
+  assign d10 = m.garan_duration.value | times: 10 | round
+  assign years = d10 | divided_by: 10 | append: ''
+  assign half = d10 | modulo: 10
+  if half == 5
+    assign years = years | append: ',5'
+  endif
+  assign brand = m.garan_brand.value
+  assign model = m.garan_model.value
+  assign valid = false
+  if m.garan_confirmed.value == true and d10 > 20 and brand != blank and model != blank
+    assign valid = true
+  endif
+
+  # texts: Werte der Sprachfassung aus snippets/euw-lang.liquid (Index siehe dort)
+  assign garan_url = texts[3]
+  assign garan_url_label = texts[4]
+  assign garan_term = texts[10]
+  assign garan_years_label = texts[11]
+  assign t_enlarge = texts[12]
+-%}
+{%- liquid
+  # Dauer rechtsbündig an der Kontur: jede Ziffer endet mit demselben Abstand zum Kalendersymbol wie "XX" in der
+  # Vorlage (Anker je letzter Ziffer, Quelle app/lib/garan-geometry.json -> years.anchors; check-legal.mjs gleicht ab)
+  assign last_char = years | slice: -1
+  case last_char
+    when '0'
+      assign yx = 119.51
+      assign nx = 70.34
+    when '1'
+      assign yx = 120.8
+      assign nx = 71.01
+    when '2'
+      assign yx = 120.06
+      assign nx = 70.63
+    when '3'
+      assign yx = 119.51
+      assign nx = 70.34
+    when '4'
+      assign yx = 119.43
+      assign nx = 70.3
+    when '5'
+      assign yx = 119.51
+      assign nx = 70.34
+    when '6'
+      assign yx = 119.47
+      assign nx = 70.32
+    when '7'
+      assign yx = 118.85
+      assign nx = 70
+    when '8'
+      assign yx = 119.47
+      assign nx = 70.32
+    when '9'
+      assign yx = 119.47
+      assign nx = 70.32
+  endcase
+-%}
+{%- capture label_aria -%}GARAN – {{ garan_years_label }}: {{ years }}. {{ brand }}, {{ model }}{%- endcapture -%}
+{%- capture label_svg -%}
+  <svg viewBox="0 0 269.29 283.46" aria-hidden="true" focusable="false" data-euw-zoom-media>
+    <image href="{{ 'garan-full-template.png' | asset_url }}" width="269.29" height="283.46"/>
+    <text x="6.32" y="74.52" font-size="9" font-weight="400">{{ brand | escape }}</text>
+    <text x="262.97" y="74.52" font-size="9" font-weight="400" text-anchor="end">{{ model | escape }}</text>
+    <text x="{{ yx }}" y="150.57" font-size="80" font-weight="800" letter-spacing="-2.4" text-anchor="end">{{ years }}</text>
+  </svg>
+{%- endcapture -%}
+
+{%- capture full_label -%}
+  <div class="euw-garan__full" id="{{ uid }}-garan-label">
+    {%- if zoom -%}
+      <button type="button" class="euw-garan__label euw-zoom" aria-haspopup="dialog"
+        aria-label="{{ label_aria | escape }} – {{ t_enlarge | escape }}" data-euw-zoom>
+        {{- label_svg -}}
+        {%- render 'euw-zoom-hint', label: t_enlarge -%}
+      </button>
+    {%- else -%}
+      <div class="euw-garan__label" role="img" aria-label="{{ label_aria | escape }}" tabindex="-1">
+        {{- label_svg -}}
+      </div>
+    {%- endif -%}
+    <p class="euw-link" data-euw-link>
+      {{- garan_term | escape }}: <a href="{{ garan_url }}" target="_blank" rel="noopener">{{ garan_url_label }}</a>
+    </p>
+  </div>
+{%- endcapture -%}
+
+{%- if valid -%}
+{{ 'eu-warranty-fonts.css' | asset_url | stylesheet_tag }}
+{%- if nested == 'nested' -%}
+  {%- comment -%}
+    Geschachteltes Format (Leitlinien 3.3: volles Label "after mouseover or click"): der erste Klick/Tipp/Enter öffnet
+    das vollständige Label in der großen Ansicht (Skript). Ohne Skript oder ohne Modal klappt <details> es inline auf.
+  {%- endcomment -%}
+  <details class="euw-garan euw-garan--nested" data-euw-garan data-euw-unit data-euw-fit="contain"
+    id="{{ uid }}-garan" data-euw-zoom-w="1100" data-euw-zoom-h="1158" data-euw-zoom-label="{{ label_aria | escape }}">
+    <summary class="euw-garan__tab" aria-label="{{ label_aria | escape }}"{% if zoom %} aria-haspopup="dialog" data-euw-open="{{ uid }}-garan"{% endif %}>
+      <svg viewBox="0 0 368.5 56.69" aria-hidden="true" focusable="false">
+        <image href="{{ 'garan-nested-template.png' | asset_url }}" width="368.5" height="56.69"/>
+        <text x="{{ nx }}" y="46.65" font-size="41.56" font-weight="800" letter-spacing="-0.83" text-anchor="end">{{ years }}</text>
+      </svg>
+    </summary>
+    {{- full_label -}}
+  </details>
+{%- else -%}
+  <div class="euw-garan" data-euw-garan data-euw-unit data-euw-fit="contain"
+    id="{{ uid }}-garan" data-euw-zoom-w="1100" data-euw-zoom-h="1158" data-euw-zoom-label="{{ label_aria | escape }}">
+    {{- full_label -}}
+  </div>
+{%- endif -%}
+{%- endif -%}

@@ -1,0 +1,73 @@
+{
+  "source": "Kommission, GARAN label for website (offizielle SVG), Praxisleitlinien April 2026",
+  "full": {
+    "viewBox": [
+      269.29,
+      283.46
+    ],
+    "years": {
+      "xEnd": 122.07,
+      "y": 150.57,
+      "size": 80,
+      "letterSpacing": -0.03,
+      "minX": 4.3,
+      "calendarLeft": 121.17,
+      "inkRight": 118.67,
+      "anchors": {
+        "0": 119.51,
+        "1": 120.8,
+        "2": 120.06,
+        "3": 119.51,
+        "4": 119.43,
+        "5": 119.51,
+        "6": 119.47,
+        "7": 118.85,
+        "8": 119.47,
+        "9": 119.47
+      }
+    },
+    "brand": {
+      "x": 6.32,
+      "y": 74.52,
+      "size": 9
+    },
+    "model": {
+      "xEnd": 262.97,
+      "y": 74.52,
+      "size": 9,
+      "placeholderEnd": 263.27
+    },
+    "rule": [
+      6.32,
+      262.97
+    ],
+    "minGap": 9
+  },
+  "nested": {
+    "viewBox": [
+      368.5,
+      56.69
+    ],
+    "years": {
+      "xEnd": 72,
+      "y": 46.65,
+      "size": 41.56,
+      "letterSpacing": -0.02,
+      "minX": 1,
+      "calendarLeft": 70.59,
+      "inkRight": 69.49,
+      "anchors": {
+        "0": 70.34,
+        "1": 71.01,
+        "2": 70.63,
+        "3": 70.34,
+        "4": 70.3,
+        "5": 70.34,
+        "6": 70.32,
+        "7": 70,
+        "8": 70.32,
+        "9": 70.32
+      }
+    }
+  }
+}

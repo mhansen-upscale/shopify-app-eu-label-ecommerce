@@ -1,0 +1,45 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "0d10040ba726374772b9c2f2fdca21f5"
+application_url = "https://example.com"
+embedded = true
+name = "eu-gewaehrleistungslabel"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+# read_inventory: Versandpflicht (inventoryItem.requiresShipping) für den CSV-Nachweis
+# write_files: Bilder von Mitteilung und GARAN-Label in Shopify Files für Checkout und Bestellbestätigung
+scopes = "write_products,read_inventory,write_files"
+
+[webhooks]
+api_version = "2026-10"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/uninstalled"
+  topics = [ "app/uninstalled" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/scopes_update"
+  topics = [ "app/scopes_update" ]
+
+  # Tarifwechsel (Managed Pricing) im Nachweis-Protokoll festhalten
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/subscriptions_update"
+  topics = [ "app_subscriptions/update" ]
+
+  # Gelöschte Produkte aus der GARAN-Zählung (Tariflimit) nehmen
+  [[webhooks.subscriptions]]
+  topics = [ "products/delete" ]
+  uri = "/webhooks/products/delete"
+
+  # DSGVO-Pflicht-Webhooks für den App Store
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/compliance"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
